@@ -1,19 +1,22 @@
-// Simulated file content
-const simulatedFileContent = `
-// This is the simulated content of background.js
-console.log('Background script loaded');
-
-browser.runtime.onInstalled.addListener(() => {
-  console.log('Extension installed');
-});
-
-// Add any other background script logic here
-`;
+async function readLocalFile(filePath) {
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const content = await response.text();
+    return { success: true, content };
+  } catch (error) {
+    console.error("Error reading file:", error);
+    return { success: false, error: error.toString() };
+  }
+}
 
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "readFile") {
-    // Simulate reading the file by returning the hardcoded content
-    sendResponse(simulatedFileContent);
+    readLocalFile(request.filePath)
+      .then(sendResponse);
+    return true;  // Indicates we will send a response asynchronously
   }
 });
 

@@ -6,7 +6,8 @@
   "permissions": [
     "activeTab",
     "tabs",
-    "https://claude.ai/project/*"
+    "https://claude.ai/project/*",
+    "<all_urls>"
   ],
   "browser_action": {
     "default_icon": "assets/icon_48px.png",
