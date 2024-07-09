@@ -1,23 +1,33 @@
+console.log('Claude Navette content script loaded');
+
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('Message received in content script:', request);
   if (request.action === "triggerFileUpload") {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.click();
+    console.log('Triggering file upload');
+    
+    // Find the hidden file input
+    const fileInput = document.querySelector('input[data-testid="project-doc-upload"]');
+    if (!fileInput) {
+      console.error('File input not found');
+      return;
+    }
 
-    fileInput.onchange = (event) => {
-      const file = event.target.files[0];
-      const reader = new FileReader();
+    // Create a new File object
+    const file = new File(['Hello, this is a test file'], 'test.txt', { type: 'text/plain' });
 
-      reader.onload = (e) => {
-        const fileData = e.target.result;
-        // Create a custom event to send the file data to the webpage
-        const uploadEvent = new CustomEvent('fileUploaded', { 
-          detail: { name: file.name, data: fileData }
-        });
-        document.dispatchEvent(uploadEvent);
-      };
+    // Create a DataTransfer object and add the file
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
 
-      reader.readAsDataURL(file);
-    };
+    // Set the file input's files
+    fileInput.files = dataTransfer.files;
+
+    // Dispatch a change event on the file input
+    const event = new Event('change', { bubbles: true });
+    fileInput.dispatchEvent(event);
+
+    console.log('File upload triggered');
   }
 });
+
+console.log('Claude Navette content script setup complete');
