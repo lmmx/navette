@@ -6,22 +6,18 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     fileInput.onchange = (event) => {
       const file = event.target.files[0];
-      console.log('File selected:', file.name);
-      
-      // Implement file attachment logic here
-      // This is a placeholder and needs to be replaced with actual Claude-specific logic
-      const claudeInterface = document.querySelector('#claude-interface'); // Replace with actual selector
-      if (claudeInterface) {
-        const fileAttachment = document.createElement('div');
-        fileAttachment.textContent = `Attached: ${file.name}`;
-        claudeInterface.appendChild(fileAttachment);
-        
-        // You might need to trigger an event or call a function in Claude's interface
-        // to properly handle the file attachment
-        // For example: claudeInterface.dispatchEvent(new CustomEvent('fileAttached', { detail: file }));
-      } else {
-        console.error('Claude interface not found');
-      }
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const fileData = e.target.result;
+        // Create a custom event to send the file data to the webpage
+        const uploadEvent = new CustomEvent('fileUploaded', { 
+          detail: { name: file.name, data: fileData }
+        });
+        document.dispatchEvent(uploadEvent);
+      };
+
+      reader.readAsDataURL(file);
     };
   }
 });
