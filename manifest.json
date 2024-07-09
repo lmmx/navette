@@ -9,7 +9,7 @@
     "https://claude.ai/project/*"
   ],
   "browser_action": {
-    "default_icon": "icon.png",
+    "default_icon": "assets/icon_48px.png",
     "default_popup": "popup.html"
   },
   "background": {
@@ -29,6 +29,6 @@
     }
   ],
   "icons": {
-    "48": "icon.png"
+    "48": "assets/icon_48px.png"
   }
 }
