@@ -12,8 +12,8 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return;
     }
 
-    // Create a new File object
-    const file = new File(['Hello, this is a test file'], 'test.txt', { type: 'text/plain' });
+    // Create a new File object using the content from the background script
+    const file = new File([request.fileContent], 'background.js', { type: 'application/javascript' });
 
     // Create a DataTransfer object and add the file
     const dataTransfer = new DataTransfer();
