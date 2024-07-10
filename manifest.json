@@ -7,7 +7,7 @@
     "activeTab",
     "tabs",
     "https://claude.ai/project/*",
-    "<all_urls>"
+    "nativeMessaging"
   ],
   "browser_action": {
     "default_icon": "assets/icon_48px.png",
