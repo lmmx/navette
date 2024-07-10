@@ -12,10 +12,14 @@ function connectNative() {
     if (p.error) {
       console.error(`Disconnected from native application due to an error: ${p.error.message}`);
     } else {
-      console.log("Disconnected from native application");
+      console.log("Native application disconnected");
     }
     port = null;
   });
+
+  // Send a test message to verify the connection
+  port.postMessage({action: "hello"});
+  console.log("Test message sent to native application");
 }
 
 connectNative();
@@ -23,23 +27,29 @@ connectNative();
 function readLocalFile(filePath) {
   return new Promise((resolve, reject) => {
     if (!port) {
-      console.error("Native application not connected");
-      reject(new Error("Native application not connected"));
+      connectNative();  // Attempt to reconnect if port is null
+    }
+
+    if (!port) {
+      console.error("Failed to connect to native application");
+      reject(new Error("Failed to connect to native application"));
       return;
     }
 
     console.log(`Sending request to read file: ${filePath}`);
     port.postMessage({ action: "read_file", path: filePath });
     
-    port.onMessage.addListener(function listener(response) {
-      port.onMessage.removeListener(listener);
+    function messageListener(response) {
       console.log("Received response from native application:", response);
+      port.onMessage.removeListener(messageListener);
       if (response.success) {
         resolve(response);
       } else {
         reject(new Error(response.error));
       }
-    });
+    }
+
+    port.onMessage.addListener(messageListener);
   });
 }
 
@@ -47,7 +57,10 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("Received message in background script:", request);
   if (request.action === "readFile") {
     readLocalFile(request.filePath)
-      .then(sendResponse)
+      .then(response => {
+        console.log("File read successfully:", response);
+        sendResponse(response);
+      })
       .catch(error => {
         console.error("Error reading file:", error);
         sendResponse({ success: false, error: error.toString() });

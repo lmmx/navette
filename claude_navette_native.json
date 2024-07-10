@@ -1,8 +1,7 @@
 {
   "name": "claude_navette_native",
   "description": "Native file reader for Claude Navette",
-  "path": "/usr/bin/python3",
+  "path": "/home/louis/dev/navette/native_file_reader.py",
   "type": "stdio",
-  "allowed_extensions": ["1cb2bc9baeca2946ce0e9bea77b120fb8d188f04@temporary-addon"],
-  "args": ["/home/louis/dev/navette/native_file_reader.py"]
+  "allowed_extensions": ["03aed8335ca295a0682739e52ff1dbc7e1a416ef@temporary-addon"],
 }
