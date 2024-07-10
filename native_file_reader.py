@@ -2,6 +2,7 @@ import sys
 import json
 import struct
 import logging
+import os
 
 # Set up logging
 logging.basicConfig(filename='/tmp/native_file_reader.log', level=logging.DEBUG)
@@ -33,7 +34,10 @@ logging.debug("Native application started")
 while True:
     try:
         message = get_message()
-        if message['action'] == 'read_file':
+        if message['action'] == 'hello':
+            send_message(encode_message({'success': True, 'message': 'Hello received'}))
+            logging.debug("Responded to hello message")
+        elif message['action'] == 'read_file':
             try:
                 with open(message['path'], 'r') as file:
                     content = file.read()
@@ -43,6 +47,8 @@ while True:
                 error_message = {'success': False, 'error': str(e)}
                 send_message(encode_message(error_message))
                 logging.error(f"Error reading file: {str(e)}")
+        else:
+            logging.warning(f"Unknown action received: {message['action']}")
     except Exception as e:
         logging.error(f"Unexpected error: {str(e)}")
         break
